@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inicio - Edify{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="home-page">
+<div class="hero-section text-center py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-lg-start">
+                <h1 class="display-4 fw-bold mb-4">
+                    Bienvenido a <span class="text-primary">Edify</span>
+                </h1>
+                <p class="lead mb-4">
+                    La plataforma educativa que te conecta con el conocimiento. 
+                    Aprende de los mejores maestros o comparte tu experiencia enseñando.
+                </p>
+                
+                {% if user.is_authenticated %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        ¡Hola <strong>{{ user.first_name }}</strong>! 
+                        Estás registrado como <strong>{{ user.get_role_display }}</strong>
+                    </div>
+                {% else %}
+                    <div class="d-flex gap-3 justify-content-lg-start justify-content-center">
+                        <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Comenzar Ahora
+                        </a>
+                        <a href="{% url 'users:login' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-6 mt-4 mt-lg-0">
+                <i class="fas fa-graduation-cap display-1 text-primary"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="features-section py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">¿Por qué elegir Edify?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-book-reader fa-3x text-primary mb-3"></i>
+                    <h4>Aprende a tu ritmo</h4>
+                    <p class="text-muted">
+                        Accede a cursos de calidad en cualquier momento y desde cualquier lugar.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-chalkboard-teacher fa-3x text-primary mb-3"></i>
+                    <h4>Maestros expertos</h4>
+                    <p class="text-muted">
+                        Aprende de profesionales con experiencia en sus áreas de especialización.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-certificate fa-3x text-primary mb-3"></i>
+                    <h4>Certificados</h4>
+                    <p class="text-muted">
+                        Obtén certificados al completar tus cursos y potencia tu perfil profesional.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if not user.is_authenticated %}
+<div class="cta-section py-5 text-center">
+    <div class="container">
+        <h2 class="mb-4">¿Listo para comenzar tu viaje de aprendizaje?</h2>
+        <p class="lead mb-4">Únete a miles de estudiantes y maestros en Edify</p>
+        <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-rocket me-2"></i>Regístrate Gratis
+        </a>
+    </div>
+</div>
+{% endif %}
+</div>
+{% endblock %}

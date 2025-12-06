@@ -1,0 +1,13 @@
+.profile-page .card {
+    border: none;
+    border-radius: 15px;
+}
+
+.profile-page .row {
+    padding: 10px 0;
+}
+
+.profile-page .badge {
+    font-size: 1rem;
+    padding: 8px 15px;
+}

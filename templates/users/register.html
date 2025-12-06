@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Registro - Edify{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4 mb-5 auth-card">
+    <div class="col-md-8 col-lg-7">
+        <div class="card shadow-lg">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                    <h2 class="card-title">Crear Cuenta</h2>
+                    <p class="text-muted">Únete a la comunidad de Edify</p>
+                </div>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {{ form|crispy }}
+                    
+                    <div class="alert alert-info small mb-3">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        <strong>Requisitos de contraseña:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Debe contener al menos 8 caracteres</li>
+                            <li>No puede ser completamente numérica</li>
+                            <li>No puede ser muy común</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="text-muted mb-0">
+                            ¿Ya tienes cuenta? 
+                            <a href="{% url 'users:login' %}" class="text-primary fw-bold">
+                                Inicia sesión aquí
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
