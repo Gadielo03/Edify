@@ -1,12 +1,10 @@
 # docker-compose.yml
-version: '3.8'
-
 services:
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./src:/app
+      - .:/app
     ports:
       - "8000:8000"
     depends_on:
@@ -22,7 +20,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=edifyh_db
+      - POSTGRES_DB=edify_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
