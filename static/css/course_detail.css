@@ -1,0 +1,263 @@
+/* Course Detail Page Styles */
+.course-detail-page {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.course-header {
+    background: linear-gradient(135deg, #4a90e2, #2c3e50);
+    padding: 40px 0;
+    margin-bottom: 0;
+}
+
+.breadcrumb {
+    background: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: white;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.course-meta .badge {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+}
+
+.course-actions .btn {
+    font-weight: 600;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+}
+
+.course-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.course-actions .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+}
+
+.course-actions .btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+/* Progress Card */
+.progress-card {
+    border: none;
+    border-radius: 15px;
+}
+
+.progress-circle {
+    position: relative;
+    display: inline-block;
+}
+
+.circular-progress {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #4a90e2 calc(var(--progress) * 3.6deg),
+        #e9ecef 0deg
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.circular-progress::before {
+    content: '';
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: white;
+}
+
+.circular-progress .percentage {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #4a90e2;
+    z-index: 1;
+    position: relative;
+}
+
+/* Module Card */
+.module-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.module-card .card-header {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: white;
+    padding: 20px;
+    border-bottom: none;
+}
+
+.module-card .card-header h4 {
+    font-size: 1.25rem;
+}
+
+/* Lessons List */
+.lessons-list {
+    padding: 0;
+}
+
+.lesson-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.lesson-item:last-child {
+    border-bottom: none;
+}
+
+.lesson-item:hover {
+    background-color: #f8f9fa;
+}
+
+.lesson-item.completed {
+    background-color: #f0f9ff;
+}
+
+.lesson-item.locked {
+    opacity: 0.6;
+}
+
+.lesson-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.lesson-icon {
+    font-size: 1.5rem;
+    margin-right: 15px;
+    width: 30px;
+    text-align: center;
+}
+
+.lesson-info h6 {
+    margin: 0;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.lesson-info small {
+    color: #6c757d;
+}
+
+.lesson-action .btn {
+    min-width: 120px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.module-card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.module-card:nth-child(1) { animation-delay: 0.1s; }
+.module-card:nth-child(2) { animation-delay: 0.2s; }
+.module-card:nth-child(3) { animation-delay: 0.3s; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .course-header {
+        padding: 30px 0;
+    }
+    
+    .course-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .progress-card {
+        margin-top: 20px;
+    }
+    
+    .lesson-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .lesson-action {
+        width: 100%;
+    }
+    
+    .lesson-action .btn {
+        width: 100%;
+    }
+}
+
+/* Empty State */
+.alert-info {
+    border-radius: 10px;
+    padding: 20px;
+}
+
+/* Delete Modal */
+.modal-content {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.modal-header.bg-danger {
+    border: none;
+}
+
+.modal-body .alert-warning {
+    border-left: 4px solid #ffc107;
+}
+
+.modal-footer {
+    border-top: 2px solid #e9ecef;
+}
+
+.modal-footer .btn {
+    font-weight: 600;
+    min-width: 120px;
+}
+
+/* Modal Animation */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+}

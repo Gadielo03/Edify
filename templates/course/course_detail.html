@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }} - Edify{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/course_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="course-detail-page">
+    <!-- Course Header -->
+    <div class="course-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'course:list' %}">Cursos</a></li>
+                            <li class="breadcrumb-item active">{{ course.title }}</li>
+                        </ol>
+                    </nav>
+                    <h1 class="display-5 fw-bold text-white mb-3">{{ course.title }}</h1>
+                    <p class="lead text-white-50 mb-4">{{ course.description }}</p>
+                    <div class="course-meta d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <span class="badge bg-light text-dark me-2">
+                                <i class="fas fa-user me-1"></i>
+                                {{ course.owner.get_full_name|default:course.owner.username }}
+                            </span>
+                            <span class="badge bg-light text-dark">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ course.created|date:"d M Y" }}
+                            </span>
+                        </div>
+                        {% if is_owner %}
+                        <div class="course-actions mt-2 mt-lg-0">
+                            <a href="{% url 'course:edit' course.slug %}" class="btn btn-warning btn-sm me-2">
+                                <i class="fas fa-edit me-1"></i>Editar
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="fas fa-trash me-1"></i>Eliminar
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="progress-card card shadow">
+                        <div class="card-body text-center">
+                            <h5 class="mb-3">Tu Progreso</h5>
+                            <div class="progress-circle mb-3">
+                                <div class="circular-progress" style="--progress: {{ progress_percentage }}">
+                                    <span class="percentage">{{ progress_percentage }}%</span>
+                                </div>
+                            </div>
+                            <p class="mb-0 text-muted">
+                                {{ completed_count }} de {{ total_lessons }} lecciones completadas
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Content -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mb-4">
+                    <i class="fas fa-book-open me-2"></i>Contenido del Curso
+                </h3>
+                
+                {% if modules_data %}
+                    {% for module_item in modules_data %}
+                    <div class="module-card card mb-4">
+                        <div class="card-header">
+                            <h4 class="mb-0">
+                                <i class="fas fa-folder-open me-2"></i>
+                                Módulo {{ forloop.counter }}: {{ module_item.module.title }}
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="lessons-list">
+                                {% for lesson_item in module_item.lessons %}
+                                <div class="lesson-item {% if lesson_item.is_completed %}completed{% endif %} {% if not lesson_item.is_unlocked %}locked{% endif %}">
+                                    <div class="lesson-content">
+                                        <div class="lesson-icon">
+                                            {% if lesson_item.is_completed %}
+                                                <i class="fas fa-check-circle text-success"></i>
+                                            {% elif lesson_item.is_unlocked %}
+                                                {% if lesson_item.lesson.content_type == 'video' %}
+                                                    <i class="fas fa-play-circle text-primary"></i>
+                                                {% elif lesson_item.lesson.content_type == 'pdf' %}
+                                                    <i class="fas fa-file-pdf text-danger"></i>
+                                                {% else %}
+                                                    <i class="fas fa-file-alt text-info"></i>
+                                                {% endif %}
+                                            {% else %}
+                                                <i class="fas fa-lock text-muted"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div class="lesson-info">
+                                            <h6 class="mb-1">{{ lesson_item.lesson.title }}</h6>
+                                            <small class="text-muted">
+                                                {% if lesson_item.lesson.content_type == 'video' %}
+                                                    <i class="fas fa-video me-1"></i>Video
+                                                {% elif lesson_item.lesson.content_type == 'pdf' %}
+                                                    <i class="fas fa-file-pdf me-1"></i>Documento PDF
+                                                {% else %}
+                                                    <i class="fas fa-align-left me-1"></i>Contenido de Texto
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="lesson-action">
+                                        {% if lesson_item.is_unlocked %}
+                                            <a href="{% url 'course:lesson_detail' lesson_item.lesson.id %}" 
+                                               class="btn btn-sm btn-primary">
+                                                {% if lesson_item.is_completed %}
+                                                    <i class="fas fa-redo me-1"></i>Revisar
+                                                {% else %}
+                                                    <i class="fas fa-play me-1"></i>Comenzar
+                                                {% endif %}
+                                            </a>
+                                        {% else %}
+                                            <button class="btn btn-sm btn-secondary" disabled>
+                                                <i class="fas fa-lock me-1"></i>Bloqueado
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Este curso aún no tiene módulos disponibles.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+{% if is_owner %}
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>¡Advertencia!</strong> Esta acción no se puede deshacer.
+                </div>
+                <p class="mb-3">¿Estás seguro de que deseas eliminar el curso <strong>"{{ course.title }}"</strong>?</p>
+                <p class="mb-0 text-muted small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Se eliminarán todos los módulos, lecciones y el progreso de los estudiantes asociados a este curso.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <form method="post" action="{% url 'course:delete' course.slug %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Sí, Eliminar Curso
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

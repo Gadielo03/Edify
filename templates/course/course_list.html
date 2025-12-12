@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cursos - Edify{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/course_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="courses-page">
+    <!-- Header Section -->
+    <div class="courses-header text-center py-5">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-book-open me-3"></i>Cursos Disponibles
+        </h1>
+        <p class="lead text-muted mb-4">
+            Explora nuestra colección de cursos y comienza tu aprendizaje
+        </p>
+        
+        {% if is_teacher %}
+        <div class="mt-4">
+            <a href="{% url 'course:create' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus-circle me-2"></i>Crear Nuevo Curso
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Courses Grid -->
+    <div class="container my-5">
+        {% if courses %}
+        <div class="row g-4">
+            {% for course in courses %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card course-card h-100 shadow-sm">
+                    <div class="card-header course-card-header">
+                        <i class="fas fa-graduation-cap me-2"></i>
+                        {{ course.owner.get_full_name|default:course.owner.username }}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold">{{ course.title }}</h5>
+                        <p class="card-text text-muted flex-grow-1">
+                            {{ course.description|truncatewords:20 }}
+                        </p>
+                        
+                        <!-- Course Stats -->
+                        <div class="course-stats mb-3">
+                            <div class="d-flex justify-content-between text-muted small">
+                                <span>
+                                    <i class="fas fa-folder me-1"></i>
+                                    {{ course.modules.count }} módulo{{ course.modules.count|pluralize }}
+                                </span>
+                                <span>
+                                    <i class="far fa-clock me-1"></i>
+                                    {{ course.created|date:"d M Y" }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Button -->
+                        <a href="{% url 'course:detail' course.slug %}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-eye me-2"></i>Ver Curso
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state text-center py-5">
+            <i class="fas fa-book-open fa-5x text-muted mb-4"></i>
+            <h3 class="mb-3">No hay cursos disponibles</h3>
+            <p class="text-muted mb-4">
+                {% if is_teacher %}
+                Sé el primero en crear un curso para compartir tu conocimiento.
+                {% else %}
+                Aún no hay cursos publicados. Vuelve pronto para descubrir nuevo contenido.
+                {% endif %}
+            </p>
+            {% if is_teacher %}
+            <a href="{% url 'course:create' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus-circle me-2"></i>Crear Mi Primer Curso
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section bg-light py-5 mt-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-box">
+                        <i class="fas fa-video fa-3x text-primary mb-3"></i>
+                        <h5>Contenido Multimedia</h5>
+                        <p class="text-muted">Videos, documentos y más recursos para tu aprendizaje</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-box">
+                        <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                        <h5>Seguimiento de Progreso</h5>
+                        <p class="text-muted">Monitorea tu avance en cada curso y módulo</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-box">
+                        <i class="fas fa-certificate fa-3x text-primary mb-3"></i>
+                        <h5>Certificados</h5>
+                        <p class="text-muted">Obtén certificados al completar tus cursos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

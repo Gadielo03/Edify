@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Editar {{ course.title }} - Edify{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/course_create.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="course-create-page">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <!-- Header -->
+                <div class="create-header text-center mb-5">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center">
+                            <li class="breadcrumb-item"><a href="{% url 'course:list' %}">Cursos</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'course:detail' course.slug %}">{{ course.title }}</a></li>
+                            <li class="breadcrumb-item active">Editar</li>
+                        </ol>
+                    </nav>
+                    <h1 class="display-5 fw-bold">
+                        <i class="fas fa-edit me-2"></i>Editar Curso
+                    </h1>
+                    <p class="lead text-muted">
+                        Actualiza el curso, sus módulos y lecciones
+                    </p>
+                </div>
+
+                <!-- Formulario -->
+                <div class="card shadow-lg">
+                    <div class="card-body p-4">
+                        <form method="post" enctype="multipart/form-data" id="courseForm">
+                            {% csrf_token %}
+                            
+                            <!-- Información del Curso -->
+                            <div class="section-header mb-4">
+                                <h3><i class="fas fa-book me-2"></i>Información del Curso</h3>
+                                <hr>
+                            </div>
+                            
+                            {{ course_form|crispy }}
+                            
+                            <!-- Módulos Container -->
+                            <div class="section-header mb-4 mt-5">
+                                <h3><i class="fas fa-folder me-2"></i>Módulos y Lecciones</h3>
+                                <hr>
+                            </div>
+                            
+                            <div id="modules-container">
+                                <!-- Los módulos existentes se cargarán aquí -->
+                            </div>
+                            
+                            <button type="button" class="btn btn-success mb-4" id="add-module-btn">
+                                <i class="fas fa-plus me-2"></i>Agregar Módulo
+                            </button>
+                            
+                            <!-- Botones de acción -->
+                            <div class="form-actions mt-5">
+                                <hr class="mb-4">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{% url 'course:detail' course.slug %}" class="btn btn-secondary btn-lg">
+                                        <i class="fas fa-times me-2"></i>Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template para Módulo -->
+<template id="module-template">
+    <div class="module-card card mb-4" data-module-index="">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-folder-open me-2"></i>Módulo <span class="module-number"></span>
+            </h5>
+            <button type="button" class="btn btn-danger btn-sm remove-module-btn">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        <div class="card-body">
+            <input type="hidden" class="module-id-input" name="">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label class="form-label">Título del Módulo</label>
+                        <input type="text" class="form-control module-title-input" name="" placeholder="Ej: Introducción" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Orden</label>
+                        <input type="number" class="form-control module-order-input" name="" min="1" value="1" required>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lecciones Container -->
+            <div class="lessons-container mt-3">
+                <h6 class="text-muted mb-3">
+                    <i class="fas fa-book-reader me-2"></i>Lecciones
+                </h6>
+                <div class="lessons-list">
+                    <!-- Las lecciones se agregarán aquí -->
+                </div>
+            </div>
+            
+            <button type="button" class="btn btn-sm btn-outline-primary add-lesson-btn mt-2">
+                <i class="fas fa-plus me-1"></i>Agregar Lección
+            </button>
+        </div>
+    </div>
+</template>
+
+<!-- Template para Lección -->
+<template id="lesson-template">
+    <div class="lesson-card card mb-3" data-lesson-index="">
+        <div class="card-body">
+            <input type="hidden" class="lesson-id-input" name="">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <h6 class="mb-0">
+                    <i class="fas fa-book-open me-2"></i>Lección <span class="lesson-number"></span>
+                </h6>
+                <button type="button" class="btn btn-danger btn-sm remove-lesson-btn">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label class="form-label">Título de la Lección</label>
+                        <input type="text" class="form-control lesson-title-input" name="" placeholder="Ej: Variables en Python" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Orden</label>
+                        <input type="number" class="form-control lesson-order-input" name="" min="1" value="1" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Tipo de Contenido</label>
+                <select class="form-control content-type-select lesson-type-input" name="" required>
+                    <option value="">Selecciona un tipo</option>
+                    <option value="video">Video</option>
+                    <option value="pdf">Documento PDF</option>
+                    <option value="text">Solo Texto</option>
+                </select>
+            </div>
+            
+            <div class="mb-3 content-field video-field" style="display:none;">
+                <label class="form-label">URL del Video</label>
+                <input type="url" class="form-control lesson-video-input" name="" placeholder="https://www.youtube.com/watch?v=...">
+                <small class="form-text text-muted">YouTube o Vimeo</small>
+            </div>
+            
+            <div class="mb-3 content-field file-field" style="display:none;">
+                <label class="form-label">Archivo (PDF/ZIP)</label>
+                <input type="file" class="form-control lesson-file-input" name="" accept=".pdf,.zip">
+                <small class="form-text text-muted current-file"></small>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Contenido de Texto/Descripción</label>
+                <textarea class="form-control lesson-text-input" name="" rows="3" placeholder="Describe el contenido de esta lección..."></textarea>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Datos existentes para JavaScript -->
+<script id="existing-modules-data" type="application/json">
+{{ modules|safe }}
+</script>
+
+<!-- Modales de Confirmación -->
+<!-- Modal para eliminar módulo -->
+<div class="modal fade" id="deleteModuleModal" tabindex="-1" aria-labelledby="deleteModuleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModuleModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Eliminar Módulo
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">¿Estás seguro de eliminar este módulo y todas sus lecciones?</p>
+                <p class="text-muted small mt-2 mb-0">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteModule">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para eliminar lección -->
+<div class="modal fade" id="deleteLessonModal" tabindex="-1" aria-labelledby="deleteLessonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="deleteLessonModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Eliminar Lección
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">¿Estás seguro de eliminar esta lección?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" id="confirmDeleteLesson">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de validación -->
+<div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="validationModalLabel">
+                    <i class="fas fa-exclamation-circle me-2"></i>Validación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0" id="validationMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendido</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de actualización -->
+<div class="modal fade" id="confirmUpdateModal" tabindex="-1" aria-labelledby="confirmUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="confirmUpdateModalLabel">
+                    <i class="fas fa-save me-2"></i>Confirmar Cambios
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">¿Estás seguro de guardar estos cambios? Se actualizará el curso completo.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Revisar</button>
+                <button type="button" class="btn btn-primary" id="confirmUpdate">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/course_edit.js' %}"></script>
+{% endblock %}

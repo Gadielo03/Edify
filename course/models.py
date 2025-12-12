@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
+from urllib.parse import urlparse, parse_qs
+import re
 
 class Course(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='courses_created', on_delete=models.CASCADE)
@@ -8,6 +10,13 @@ class Course(models.Model):
     slug = models.SlugField(unique=True)
     description = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created']
+    
+    def __str__(self):
+        return self.title
     
     def get_progress(self, user):
         total_lessons = Lesson.objects.filter(module__course=self).count()
@@ -22,6 +31,9 @@ class Module(models.Model):
 
     class Meta:
         ordering = ['order']
+    
+    def __str__(self):
+        return f"{self.course.title} - {self.title}"
 
 class Lesson(models.Model):
     CONTENT_CHOICES = (
@@ -46,6 +58,44 @@ class Lesson(models.Model):
 
     class Meta:
         ordering = ['order']
+    
+    def __str__(self):
+        return f"{self.module.title} - {self.title}"
+    
+    def get_youtube_embed_url(self):
+        """Extrae el ID del video de YouTube y devuelve la URL de embed"""
+        if not self.video_url:
+            return None
+        
+        patterns = [
+            r'(?:https?://)?(?:www\.)?youtube\.com/watch\?v=([^&]+)',
+            r'(?:https?://)?(?:www\.)?youtube\.com/embed/([^?]+)',
+            r'(?:https?://)?(?:www\.)?youtu\.be/([^?]+)',
+            r'(?:https?://)?(?:www\.)?youtube\.com/v/([^?]+)',
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, self.video_url)
+            if match:
+                video_id = match.group(1)
+                # Agregar parámetros para evitar restricciones
+                return f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&modestbranding=1"
+        
+        return None
+    
+    def get_vimeo_embed_url(self):
+        """Extrae el ID del video de Vimeo y devuelve la URL de embed"""
+        if not self.video_url:
+            return None
+        
+        pattern = r'(?:https?://)?(?:www\.)?vimeo\.com/(\d+)'
+        match = re.search(pattern, self.video_url)
+        
+        if match:
+            video_id = match.group(1)
+            return f"https://player.vimeo.com/video/{video_id}"
+        
+        return None
 
 class UserProgress(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -55,3 +105,8 @@ class UserProgress(models.Model):
 
     class Meta:
         unique_together = ['user', 'lesson']
+        verbose_name_plural = 'User Progress'
+    
+    def __str__(self):
+        status = "✓" if self.is_completed else "✗"
+        return f"{self.user.username} - {self.lesson.title} [{status}]"
