@@ -5,7 +5,7 @@
 }
 
 .lesson-header {
-    background: linear-gradient(135deg, #4a90e2, #2c3e50);
+    background: var(--secondary-color);
     padding: 30px 0;
     margin-bottom: 0;
 }
@@ -73,21 +73,21 @@
 .lesson-text-content {
     font-size: 1.1rem;
     line-height: 1.8;
-    color: #2c3e50;
+    color: var(--text-dark);
     padding: 20px;
     background-color: #f8f9fa;
     border-radius: 10px;
-    border-left: 4px solid #4a90e2;
+    border-left: 4px solid var(--primary-color);
 }
 
 /* Complete Section */
 .complete-section {
-    background: linear-gradient(to bottom, transparent, #f0f9ff);
+    background: linear-gradient(to bottom, transparent, var(--light-color));
     border-radius: 0 0 15px 15px;
 }
 
 .complete-section h5 {
-    color: #2c3e50;
+    color: var(--text-dark);
     font-weight: 600;
 }
 
@@ -104,7 +104,7 @@
 
 /* Completed Section */
 .completed-section {
-    background: linear-gradient(to bottom, transparent, #d1f2eb);
+    background: linear-gradient(to bottom, transparent, var(--tertiary-color));
     border-radius: 0 0 15px 15px;
 }
 

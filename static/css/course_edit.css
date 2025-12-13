@@ -15,13 +15,13 @@
 }
 
 .breadcrumb-item a {
-    color: #4a90e2;
+    color: var(--primary-color);
     text-decoration: none;
     transition: color 0.3s;
 }
 
 .breadcrumb-item a:hover {
-    color: #357abd;
+    color: var(--secondary-color);
     text-decoration: underline;
 }
 
@@ -30,7 +30,7 @@
 }
 
 .edit-header h1 {
-    color: #2c3e50;
+    color: var(--text-dark);
 }
 
 .edit-header .lead {
@@ -47,7 +47,7 @@
 /* Alert */
 .alert-info {
     border-radius: 10px;
-    border-left: 4px solid #4a90e2;
+    border-left: 4px solid var(--primary-color);
 }
 
 /* Form Actions */
@@ -69,7 +69,7 @@
 }
 
 .card.border-warning .card-title {
-    color: #2c3e50;
+    color: var(--text-dark);
     font-weight: 600;
 }
 

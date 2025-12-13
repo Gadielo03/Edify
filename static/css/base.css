@@ -1,7 +1,52 @@
 :root {
-    --primary-color: #4a90e2;
-    --secondary-color: #2c3e50;
+    --primary-color: #547792;
+    --secondary-color: #213448;
+    --tertiary-color: #94B4C1;
+    --light-color: #EAE0CF;
     --accent-color: #e74c3c;
+    --text-dark: #213448;
+}
+
+/* Botones Primarios */
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Texto con color primario */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+/* Badges y Badges light */
+.badge.bg-light {
+    background-color: var(--light-color) !important;
+}
+
+/* Backgrounds */
+.bg-light {
+    background-color: var(--light-color) !important;
+}
+
+/* Iconos con colores primarios */
+.fas.text-primary, .fa.text-primary {
+    color: var(--primary-color) !important;
 }
 
 body {
@@ -11,7 +56,7 @@ body {
 }
 
 .navbar {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: #213448;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
@@ -51,7 +96,7 @@ main {
 }
 
 footer {
-    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    background: #213448;
     color: white;
     padding: 30px 0;
     margin-top: auto;
@@ -65,4 +110,106 @@ footer a {
 
 footer a:hover {
     color: white;
+}
+
+.footer-divider {
+    background-color: rgba(255,255,255,0.3);
+    opacity: 1;
+}
+
+/* Modales con colores personalizados */
+.modal-header.bg-danger {
+    background-color: var(--accent-color) !important;
+}
+
+.modal-header.bg-warning {
+    background-color: #f39c12 !important;
+}
+
+.btn-danger {
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+}
+
+.btn-danger:hover, .btn-danger:focus {
+    background-color: #c0392b !important;
+    border-color: #c0392b !important;
+}
+
+.btn-success {
+    background-color: #27ae60 !important;
+    border-color: #27ae60 !important;
+}
+
+.btn-success:hover, .btn-success:focus {
+    background-color: #229954 !important;
+    border-color: #229954 !important;
+}
+
+.btn-warning {
+    background-color: #f39c12 !important;
+    border-color: #f39c12 !important;
+    color: #000 !important;
+}
+
+.btn-warning:hover, .btn-warning:focus {
+    background-color: #e67e22 !important;
+    border-color: #e67e22 !important;
+    color: #000 !important;
+}
+
+.btn-secondary {
+    background-color: #7f8c8d !important;
+    border-color: #7f8c8d !important;
+}
+
+.btn-secondary:hover, .btn-secondary:focus {
+    background-color: #6c7a7b !important;
+    border-color: #6c7a7b !important;
+}
+
+/* Colores de texto adicionales */
+.text-success {
+    color: #27ae60 !important;
+}
+
+.text-danger {
+    color: var(--accent-color) !important;
+}
+
+.text-info {
+    color: var(--tertiary-color) !important;
+}
+
+.text-warning {
+    color: #f39c12 !important;
+}
+
+.text-muted {
+    color: #95a5a6 !important;
+}
+
+/* Alerts personalizados */
+.alert-success {
+    background-color: rgba(39, 174, 96, 0.1) !important;
+    border-color: #27ae60 !important;
+    color: #1e7e34 !important;
+}
+
+.alert-info {
+    background-color: rgba(148, 180, 193, 0.1) !important;
+    border-color: var(--tertiary-color) !important;
+    color: var(--secondary-color) !important;
+}
+
+.alert-warning {
+    background-color: rgba(243, 156, 18, 0.1) !important;
+    border-color: #f39c12 !important;
+    color: #856404 !important;
+}
+
+.alert-danger {
+    background-color: rgba(231, 76, 60, 0.1) !important;
+    border-color: var(--accent-color) !important;
+    color: #a71d2a !important;
 }
