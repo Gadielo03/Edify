@@ -4,7 +4,7 @@ from django.utils.text import slugify
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Fieldset, Div, HTML, ButtonHolder, Submit
 from crispy_forms.bootstrap import FormActions
-from .models import Course, Module, Lesson
+from .models import Course, Module, Lesson, CourseReview
 
 
 class CourseForm(forms.ModelForm):
@@ -148,3 +148,42 @@ LessonFormSet = inlineformset_factory(
     min_num=1,
     validate_min=True,
 )
+
+
+class CourseReviewForm(forms.ModelForm):
+    """Formulario para crear/editar reseñas de cursos"""
+    
+    class Meta:
+        model = CourseReview
+        fields = ['rating', 'comment']
+        widgets = {
+            'rating': forms.RadioSelect(
+                attrs={'class': 'form-check-input'}
+            ),
+            'comment': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Comparte tu experiencia con este curso...'
+            }),
+        }
+        labels = {
+            'rating': 'Calificación',
+            'comment': 'Comentario',
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.form_tag = True
+        self.helper.layout = Layout(
+            Div(
+                Field('rating', template='bootstrap5/layout/radioselect_inline.html'),
+                css_class='mb-3'
+            ),
+            Field('comment', css_class='mb-3'),
+            FormActions(
+                Submit('submit', 'Publicar Comentario', css_class='btn btn-primary'),
+                css_class='text-end'
+            )
+        )

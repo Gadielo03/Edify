@@ -110,3 +110,34 @@ class UserProgress(models.Model):
     def __str__(self):
         status = "✓" if self.is_completed else "✗"
         return f"{self.user.username} - {self.lesson.title} [{status}]"
+
+
+class CourseReview(models.Model):
+    """
+    Modelo para reseñas/comentarios de cursos.
+    Permite a los estudiantes calificar y comentar sobre los cursos.
+    Un usuario puede dejar múltiples comentarios en un curso.
+    """
+    RATING_CHOICES = (
+        (1, '1 - Muy malo'),
+        (2, '2 - Malo'),
+        (3, '3 - Regular'),
+        (4, '4 - Bueno'),
+        (5, '5 - Excelente'),
+    )
+    
+    course = models.ForeignKey(Course, related_name='reviews', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=RATING_CHOICES, default=5)
+    comment = models.TextField(help_text="Comparte tu experiencia con este curso")
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created']
+        verbose_name = 'Course Review'
+        verbose_name_plural = 'Course Reviews'
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.course.title} ({self.rating}/5)"
+

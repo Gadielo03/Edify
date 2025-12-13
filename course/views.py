@@ -3,10 +3,10 @@ from django.views import View
 from django.views.generic import ListView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.db import transaction
-from .models import Course, Module, Lesson, UserProgress
-from .forms import CourseForm, ModuleFormSet, LessonFormSet
+from .models import Course, Module, Lesson, UserProgress, CourseReview
+from .forms import CourseForm, ModuleFormSet, LessonFormSet, CourseReviewForm
 
 
 class CourseListView(ListView):
@@ -186,6 +186,19 @@ class CourseDetailView(LoginRequiredMixin, View):
         completed_count = len(completed_lessons)
         progress_percentage = (completed_count / total_lessons * 100) if total_lessons > 0 else 0
         
+        # Obtener reviews del curso
+        reviews = course.reviews.select_related('user').all()
+        
+        # Calcular calificación promedio
+        if reviews:
+            avg_rating = sum(review.rating for review in reviews) / len(reviews)
+        else:
+            avg_rating = 0
+        
+        # Formulario para nueva review
+        review_form = CourseReviewForm()
+        review_form.helper.form_action = reverse('course:review_create', kwargs={'slug': course.slug})
+        
         context = {
             'course': course,
             'modules_data': modules_data,
@@ -194,6 +207,9 @@ class CourseDetailView(LoginRequiredMixin, View):
             'total_lessons': total_lessons,
             'is_teacher': request.user.is_teacher,
             'is_owner': course.owner == request.user,
+            'reviews': reviews,
+            'avg_rating': round(avg_rating, 1),
+            'review_form': review_form,
         }
         
         return render(request, 'course/course_detail.html', context)
@@ -544,3 +560,87 @@ class CourseDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
         
         messages.success(request, f'Curso "{course_title}" eliminado exitosamente.')
         return redirect('course:list')
+
+
+class CourseReviewCreateView(LoginRequiredMixin, View):
+    """Vista para crear una nueva reseña de curso"""
+    
+    def post(self, request, slug):
+        course = get_object_or_404(Course, slug=slug)
+        form = CourseReviewForm(request.POST)
+        
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.course = course
+            review.user = request.user
+            review.save()
+            
+            messages.success(request, '¡Comentario publicado exitosamente!')
+        else:
+            messages.error(request, 'Error al publicar el comentario. Por favor verifica los datos.')
+        
+        return redirect('course:detail', slug=slug)
+
+
+class CourseReviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """Vista para editar una reseña existente"""
+    
+    def test_func(self):
+        """Solo el autor de la reseña puede editarla"""
+        review = get_object_or_404(CourseReview, id=self.kwargs['review_id'])
+        return self.request.user == review.user
+    
+    def handle_no_permission(self):
+        messages.error(self.request, 'No tienes permiso para editar este comentario.')
+        return redirect('course:detail', slug=self.kwargs['slug'])
+    
+    def get(self, request, slug, review_id):
+        course = get_object_or_404(Course, slug=slug)
+        review = get_object_or_404(CourseReview, id=review_id)
+        form = CourseReviewForm(instance=review)
+        
+        context = {
+            'course': course,
+            'form': form,
+            'review': review,
+            'is_edit': True,
+        }
+        return render(request, 'course/review_form.html', context)
+    
+    def post(self, request, slug, review_id):
+        review = get_object_or_404(CourseReview, id=review_id)
+        form = CourseReviewForm(request.POST, instance=review)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Comentario actualizado exitosamente.')
+            return redirect('course:detail', slug=slug)
+        
+        course = get_object_or_404(Course, slug=slug)
+        context = {
+            'course': course,
+            'form': form,
+            'review': review,
+            'is_edit': True,
+        }
+        return render(request, 'course/review_form.html', context)
+
+
+class CourseReviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """Vista para eliminar una reseña"""
+    
+    def test_func(self):
+        """Solo el autor de la reseña puede eliminarla"""
+        review = get_object_or_404(CourseReview, id=self.kwargs['review_id'])
+        return self.request.user == review.user
+    
+    def handle_no_permission(self):
+        messages.error(self.request, 'No tienes permiso para eliminar este comentario.')
+        return redirect('course:detail', slug=self.kwargs['slug'])
+    
+    def post(self, request, slug, review_id):
+        review = get_object_or_404(CourseReview, id=review_id)
+        review.delete()
+        
+        messages.success(request, 'Comentario eliminado exitosamente.')
+        return redirect('course:detail', slug=slug)

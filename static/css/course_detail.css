@@ -261,3 +261,176 @@
 .modal.show .modal-dialog {
     transform: none;
 }
+
+/* Reviews Section */
+.reviews-section {
+    margin-top: 40px;
+}
+
+.avg-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rating-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.rating-stars i {
+    color: #ffc107;
+    font-size: 1.2rem;
+}
+
+.review-form-container {
+    background: white;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.review-form-container:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.review-form-container h5 {
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.review-form-container .form-check-input {
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.review-form-container .form-check-label {
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.review-card {
+    border-radius: 15px;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.review-header {
+    border-bottom: 2px solid #f1f3f5;
+    padding-bottom: 15px;
+}
+
+.reviewer-avatar {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+}
+
+.reviewer-info h6 {
+    color: var(--secondary-color);
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.reviewer-info small {
+    font-size: 0.85rem;
+}
+
+.review-rating {
+    margin-top: 5px;
+}
+
+.review-rating i {
+    font-size: 1rem;
+}
+
+.review-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.review-actions .btn {
+    padding: 5px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.review-actions .btn:hover {
+    transform: translateY(-2px);
+}
+
+.review-content {
+    margin-top: 15px;
+}
+
+.review-content p {
+    color: var(--text-dark);
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+/* Rating Form Inline Layout */
+.form-check-inline {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.form-check-inline input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.form-check-inline label {
+    margin-left: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Responsive Reviews */
+@media (max-width: 768px) {
+    .avg-rating {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .rating-number {
+        font-size: 1.5rem;
+    }
+    
+    .rating-stars i {
+        font-size: 1rem;
+    }
+    
+    .review-actions {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .review-actions .btn {
+        width: 100%;
+    }
+    
+    .review-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .reviewer-avatar {
+        font-size: 2rem;
+    }
+}
