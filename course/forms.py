@@ -76,7 +76,7 @@ class LessonForm(forms.ModelForm):
     
     class Meta:
         model = Lesson
-        fields = ['title', 'content_type', 'video_url', 'file', 'text_content', 'order']
+        fields = ['title', 'content_type', 'video_url', 'video_file', 'file', 'text_content', 'order']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -88,6 +88,10 @@ class LessonForm(forms.ModelForm):
             'video_url': forms.URLInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'https://www.youtube.com/watch?v=...'
+            }),
+            'video_file': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'video/mp4,video/webm,video/ogg,video/quicktime,video/x-msvideo'
             }),
             'file': forms.FileInput(attrs={
                 'class': 'form-control'
@@ -105,7 +109,8 @@ class LessonForm(forms.ModelForm):
         labels = {
             'title': 'Título de la Lección',
             'content_type': 'Tipo de Contenido',
-            'video_url': 'URL del Video',
+            'video_url': 'URL del Video (YouTube/Vimeo)',
+            'video_file': 'O sube un video desde tu PC',
             'file': 'Archivo (PDF/ZIP)',
             'text_content': 'Contenido de Texto',
             'order': 'Orden',
@@ -115,11 +120,15 @@ class LessonForm(forms.ModelForm):
         cleaned_data = super().clean()
         content_type = cleaned_data.get('content_type')
         video_url = cleaned_data.get('video_url')
+        video_file = cleaned_data.get('video_file')
         file = cleaned_data.get('file')
         text_content = cleaned_data.get('text_content')
         
-        if content_type == 'video' and not video_url:
-            self.add_error('video_url', 'Debes proporcionar una URL de video para este tipo de contenido.')
+        if content_type == 'video':
+            if not video_url and not video_file:
+                raise forms.ValidationError('Para contenido de video, debes proporcionar una URL o subir un archivo de video.')
+            if video_url and video_file:
+                raise forms.ValidationError('Proporciona solo una opción: URL de video O archivo de video, no ambos.')
         
         if content_type == 'pdf' and not file:
             self.add_error('file', 'Debes subir un archivo para este tipo de contenido.')
@@ -142,7 +151,7 @@ LessonFormSet = inlineformset_factory(
     parent_model=Module,
     model=Lesson,
     form=LessonForm,
-    fields=['title', 'content_type', 'video_url', 'file', 'text_content', 'order'],
+    fields=['title', 'content_type', 'video_url', 'video_file', 'file', 'text_content', 'order'],
     extra=1,
     can_delete=True,
     min_num=1,

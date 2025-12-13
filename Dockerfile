@@ -15,6 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# Crear directorios para media y static files
+RUN mkdir -p /app/media/course_videos /app/media/course_materials /app/staticfiles
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

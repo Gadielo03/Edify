@@ -75,6 +75,7 @@ class CourseCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
                         title=lesson_data['title'],
                         content_type=lesson_data['content_type'],
                         video_url=lesson_data.get('video_url', ''),
+                        video_file=lesson_data.get('video_file'),
                         file=lesson_data.get('file'),
                         text_content=lesson_data.get('text_content', ''),
                         order=lesson_data['order']
@@ -117,15 +118,19 @@ class CourseCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
                     
                     modules[module_index]['lessons'][lesson_index][field_name] = value
         
-        # Agregar archivos
+        # Agregar archivos (tanto archivos regulares como videos)
         for key, file_obj in files_data.items():
-            if key.startswith('module_') and '_lesson_' in key and '_file' in key:
+            if key.startswith('module_') and '_lesson_' in key:
                 parts = key.split('_')
                 module_index = parts[1]
                 lesson_index = parts[3]
                 
                 if module_index in modules and lesson_index in modules[module_index]['lessons']:
-                    modules[module_index]['lessons'][lesson_index]['file'] = file_obj
+                    # Determinar si es archivo regular o video
+                    if 'video' in key and 'file' in key:
+                        modules[module_index]['lessons'][lesson_index]['video_file'] = file_obj
+                    elif 'file' in key:
+                        modules[module_index]['lessons'][lesson_index]['file'] = file_obj
         
         # Convertir a lista
         result = []
@@ -371,6 +376,8 @@ class CourseUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
                     'order': lesson.order,
                     'file_url': lesson.file.url if lesson.file else '',
                     'file_name': lesson.file.name.split('/')[-1] if lesson.file else '',
+                    'video_file_url': lesson.video_file.url if lesson.video_file else '',
+                    'video_file_name': lesson.video_file.name.split('/')[-1] if lesson.video_file else '',
                 })
             modules_data.append({
                 'id': module.id,
@@ -458,6 +465,10 @@ class CourseUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
                         if lesson_data.get('file'):
                             lesson.file = lesson_data['file']
                         
+                        # Actualizar video si se subió uno nuevo
+                        if lesson_data.get('video_file'):
+                            lesson.video_file = lesson_data['video_file']
+                        
                         lesson.save()
                     else:
                         # Crear nueva lección
@@ -466,6 +477,7 @@ class CourseUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
                             title=lesson_data['title'],
                             content_type=lesson_data['content_type'],
                             video_url=lesson_data.get('video_url', ''),
+                            video_file=lesson_data.get('video_file'),
                             file=lesson_data.get('file'),
                             text_content=lesson_data.get('text_content', ''),
                             order=lesson_data['order']
@@ -514,15 +526,19 @@ class CourseUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
                     
                     modules[module_index]['lessons'][lesson_index][field_name] = value
         
-        # Agregar archivos
+        # Agregar archivos (tanto archivos regulares como videos)
         for key, file_obj in files_data.items():
-            if key.startswith('module_') and '_lesson_' in key and '_file' in key:
+            if key.startswith('module_') and '_lesson_' in key:
                 parts = key.split('_')
                 module_index = parts[1]
                 lesson_index = parts[3]
                 
                 if module_index in modules and lesson_index in modules[module_index]['lessons']:
-                    modules[module_index]['lessons'][lesson_index]['file'] = file_obj
+                    # Determinar si es archivo regular o video
+                    if 'video' in key and 'file' in key:
+                        modules[module_index]['lessons'][lesson_index]['video_file'] = file_obj
+                    elif 'file' in key:
+                        modules[module_index]['lessons'][lesson_index]['file'] = file_obj
         
         # Convertir a lista
         result = []

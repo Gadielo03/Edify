@@ -46,6 +46,13 @@ class Lesson(models.Model):
     title = models.CharField(max_length=200)
     content_type = models.CharField(max_length=10, choices=CONTENT_CHOICES)
     video_url = models.URLField(blank=True, null=True, help_text="URL de Vimeo/Youtube")
+    video_file = models.FileField(
+        upload_to='course_videos/',
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=['mp4', 'webm', 'ogg', 'mov', 'avi'])],
+        help_text="Video subido desde tu PC (MP4, WebM, OGG, MOV, AVI)"
+    )
     file = models.FileField(
         upload_to='course_materials/', 
         blank=True, 

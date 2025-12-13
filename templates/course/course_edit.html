@@ -163,9 +163,16 @@
             </div>
             
             <div class="mb-3 content-field video-field" style="display:none;">
-                <label class="form-label">URL del Video</label>
+                <label class="form-label">URL del Video (YouTube/Vimeo)</label>
                 <input type="url" class="form-control lesson-video-input" name="" placeholder="https://www.youtube.com/watch?v=...">
-                <small class="form-text text-muted">YouTube o Vimeo</small>
+                <small class="form-text text-muted">O usa el campo de abajo para subir un video</small>
+            </div>
+            
+            <div class="mb-3 content-field video-file-field" style="display:none;">
+                <label class="form-label">O Sube un Video desde tu PC</label>
+                <input type="file" class="form-control lesson-video-file-input" name="" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/x-msvideo">
+                <small class="form-text text-muted current-video-file"></small>
+                <small class="form-text text-muted d-block">Formatos soportados: MP4, WebM, OGG, MOV, AVI (máx. 500MB recomendado)</small>
             </div>
             
             <div class="mb-3 content-field file-field" style="display:none;">

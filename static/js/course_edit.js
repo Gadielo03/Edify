@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const orderInput = lessonCard.querySelector('.lesson-order-input');
         const typeSelect = lessonCard.querySelector('.lesson-type-input');
         const videoInput = lessonCard.querySelector('.lesson-video-input');
+        const videoFileInput = lessonCard.querySelector('.lesson-video-file-input');
         const fileInput = lessonCard.querySelector('.lesson-file-input');
         const textInput = lessonCard.querySelector('.lesson-text-input');
         
@@ -120,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         orderInput.setAttribute('name', `module_${moduleIndex}_lesson_${lessonIndex}_order`);
         typeSelect.setAttribute('name', `module_${moduleIndex}_lesson_${lessonIndex}_content_type`);
         videoInput.setAttribute('name', `module_${moduleIndex}_lesson_${lessonIndex}_video_url`);
+        videoFileInput.setAttribute('name', `module_${moduleIndex}_lesson_${lessonIndex}_video_file`);
         fileInput.setAttribute('name', `module_${moduleIndex}_lesson_${lessonIndex}_file`);
         textInput.setAttribute('name', `module_${moduleIndex}_lesson_${lessonIndex}_text_content`);
         
@@ -137,6 +139,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const currentFileSpan = lessonCard.querySelector('.current-file');
                 currentFileSpan.textContent = `Archivo actual: ${lessonData.file_name}`;
                 currentFileSpan.innerHTML += ' <a href="' + lessonData.file_url + '" target="_blank" class="text-primary">(Ver)</a>';
+            }
+            
+            // Mostrar video actual si existe
+            if (lessonData.video_file_name) {
+                const currentVideoFileSpan = lessonCard.querySelector('.current-video-file');
+                currentVideoFileSpan.textContent = `Video actual: ${lessonData.video_file_name}`;
+                currentVideoFileSpan.innerHTML += ' <a href="' + lessonData.video_file_url + '" target="_blank" class="text-primary">(Ver)</a>';
             }
             
             // Mostrar campos según tipo de contenido
@@ -163,20 +172,25 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function handleContentTypeChange(lessonCard, contentType) {
         const videoField = lessonCard.querySelector('.video-field');
+        const videoFileField = lessonCard.querySelector('.video-file-field');
         const fileField = lessonCard.querySelector('.file-field');
         const videoInput = videoField.querySelector('input');
+        const videoFileInput = videoFileField.querySelector('input');
         const fileInput = fileField.querySelector('input');
         
         // Ocultar todos los campos
         videoField.style.display = 'none';
+        videoFileField.style.display = 'none';
         fileField.style.display = 'none';
         videoInput.removeAttribute('required');
+        videoFileInput.removeAttribute('required');
         fileInput.removeAttribute('required');
         
         // Mostrar el campo correspondiente
         if (contentType === 'video') {
             videoField.style.display = 'block';
-            videoInput.setAttribute('required', 'required');
+            videoFileField.style.display = 'block';
+            // No hacer required porque puede ser URL O archivo, no ambos
         } else if (contentType === 'pdf') {
             fileField.style.display = 'block';
             // No hacer required en edición si ya existe un archivo
