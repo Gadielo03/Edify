@@ -434,3 +434,39 @@
         font-size: 2rem;
     }
 }
+
+/* Certificate Section */
+.certificate-section {
+    transition: all 0.3s ease;
+}
+
+.certificate-section:hover {
+    transform: translateY(-2px);
+}
+
+.certificate-section .btn-success {
+    font-weight: 600;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+.certificate-section .btn-success:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.4);
+}
+
+.fa-trophy {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}

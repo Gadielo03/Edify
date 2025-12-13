@@ -23,6 +23,28 @@ class Course(models.Model):
         if total_lessons == 0: return 0
         completed = UserProgress.objects.filter(user=user, lesson__module__course=self, is_completed=True).count()
         return (completed / total_lessons) * 100
+    
+    def get_completion_percentage(self, user):
+        """
+        Calcula el porcentaje de finalización del curso para un usuario
+        """
+        total_lessons = Lesson.objects.filter(module__course=self).count()
+        if total_lessons == 0:
+            return 0
+        
+        completed_lessons = UserProgress.objects.filter(
+            user=user,
+            lesson__module__course=self,
+            is_completed=True
+        ).count()
+        
+        return round((completed_lessons / total_lessons) * 100, 2)
+    
+    def is_completed_by_user(self, user):
+        """
+        Verifica si el usuario ha completado el 100% del curso
+        """
+        return self.get_completion_percentage(user) == 100.0
 
 class Module(models.Model):
     course = models.ForeignKey(Course, related_name='modules', on_delete=models.CASCADE)

@@ -2,11 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from django.db import transaction
+from django.http import HttpResponse
 from .models import Course, Module, Lesson, UserProgress, CourseReview
 from .forms import CourseForm, ModuleFormSet, LessonFormSet, CourseReviewForm
+from .utils import generate_certificate
 
 
 class CourseListView(ListView):
@@ -660,3 +663,26 @@ class CourseReviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
         
         messages.success(request, 'Comentario eliminado exitosamente.')
         return redirect('course:detail', slug=slug)
+
+
+@login_required
+def download_certificate(request, slug):
+    """
+    Vista para descargar el certificado de finalización del curso
+    """
+    course = get_object_or_404(Course, slug=slug)
+    
+    # Verificar que el usuario haya completado el 100% del curso
+    if not course.is_completed_by_user(request.user):
+        messages.error(request, 'Debes completar el 100% del curso para descargar el certificado.')
+        return redirect('course:detail', slug=slug)
+    
+    # Generar el certificado PDF
+    pdf_buffer = generate_certificate(request.user, course)
+    
+    # Crear respuesta HTTP con el PDF
+    response = HttpResponse(pdf_buffer, content_type='application/pdf')
+    filename = f'Certificado_{course.slug}_{request.user.username}.pdf'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    return response

@@ -54,9 +54,34 @@
                                     <span class="percentage">{{ progress_percentage }}%</span>
                                 </div>
                             </div>
-                            <p class="mb-0 text-muted">
+                            <p class="mb-3 text-muted">
                                 {{ completed_count }} de {{ total_lessons }} lecciones completadas
                             </p>
+                            
+                            <!-- Botón de Certificado -->
+                            {% if progress_percentage == 100 %}
+                            <div class="certificate-section mt-3 p-3 bg-success bg-opacity-10 rounded">
+                                <div class="d-flex align-items-center justify-content-center mb-2">
+                                    <i class="fas fa-trophy text-warning fa-2x me-2"></i>
+                                    <span class="badge bg-success">¡Curso Completado!</span>
+                                </div>
+                                <p class="small text-muted mb-2">
+                                    <i class="fas fa-certificate me-1"></i>
+                                    Has completado todas las lecciones
+                                </p>
+                                <a href="{% url 'course:download_certificate' course.slug %}" 
+                                   class="btn btn-success w-100">
+                                    <i class="fas fa-download me-2"></i>Descargar Certificado
+                                </a>
+                            </div>
+                            {% else %}
+                            <div class="certificate-section mt-3 p-3 bg-light rounded">
+                                <p class="small text-muted mb-0">
+                                    <i class="fas fa-lock me-1"></i>
+                                    Completa todas las lecciones para obtener tu certificado
+                                </p>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
