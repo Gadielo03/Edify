@@ -116,7 +116,7 @@
 
                         <!-- Complete Lesson Button -->
                         {% if not is_completed %}
-                        <div class="complete-section text-center py-4 border-top">
+                        <div class="complete-section text-center py-4">
                             <h5 class="mb-3">¿Terminaste esta lección?</h5>
                             <form method="post" action="{% url 'course:mark_complete' lesson.id %}">
                                 {% csrf_token %}
@@ -126,7 +126,7 @@
                             </form>
                         </div>
                         {% else %}
-                        <div class="completed-section text-center py-4 border-top">
+                        <div class="completed-section text-center py-4">
                             <div class="alert alert-success mb-0">
                                 <i class="fas fa-check-circle me-2"></i>
                                 ¡Ya completaste esta lección!

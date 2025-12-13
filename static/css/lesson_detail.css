@@ -96,6 +96,8 @@
 .complete-section {
     background: linear-gradient(to bottom, transparent, var(--light-color));
     border-radius: 0 0 15px 15px;
+    margin-top: 30px;
+    border-top: 1px solid #e9ecef;
 }
 
 .complete-section h5 {
@@ -107,6 +109,7 @@
     padding: 12px 40px;
     font-weight: 600;
     transition: all 0.3s ease;
+    border: none;
 }
 
 .complete-section .btn:hover {
@@ -118,11 +121,14 @@
 .completed-section {
     background: linear-gradient(to bottom, transparent, var(--tertiary-color));
     border-radius: 0 0 15px 15px;
+    margin-top: 30px;
+    border-top: 1px solid #e9ecef;
 }
 
 .completed-section .alert {
     font-size: 1.1rem;
     font-weight: 600;
+    border: none;
 }
 
 /* Navigation */

@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from .models import User
 
 
@@ -90,3 +90,122 @@ class UserLoginForm(AuthenticationForm):
             'placeholder': 'Contraseña'
         })
     )
+
+
+class UserProfileEditForm(forms.ModelForm):
+    """Formulario para editar el perfil del usuario"""
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'correo@ejemplo.com'
+        }),
+        label='Correo Electrónico'
+    )
+    first_name = forms.CharField(
+        required=True,
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nombre'
+        }),
+        label='Nombre'
+    )
+    last_name = forms.CharField(
+        required=True,
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Apellido'
+        }),
+        label='Apellido'
+    )
+    bio = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Cuéntanos un poco sobre ti...',
+            'rows': 4
+        }),
+        label='Biografía'
+    )
+    
+    # Campos opcionales para cambiar contraseña
+    old_password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Contraseña actual'
+        }),
+        label='Contraseña Actual',
+        help_text='Solo necesario si deseas cambiar tu contraseña'
+    )
+    new_password1 = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nueva contraseña'
+        }),
+        label='Nueva Contraseña',
+        help_text='Deja en blanco si no quieres cambiar tu contraseña'
+    )
+    new_password2 = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirmar nueva contraseña'
+        }),
+        label='Confirmar Nueva Contraseña'
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'bio']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Nombre de usuario'
+        })
+        self.fields['username'].help_text = 'Letras, dígitos y @/./+/-/_ solamente.'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        old_password = cleaned_data.get('old_password')
+        new_password1 = cleaned_data.get('new_password1')
+        new_password2 = cleaned_data.get('new_password2')
+        
+        # Validar cambio de contraseña
+        if any([old_password, new_password1, new_password2]):
+            # Si algún campo de contraseña está lleno, todos deben estarlo
+            if not all([old_password, new_password1, new_password2]):
+                raise forms.ValidationError(
+                    'Para cambiar tu contraseña, debes completar todos los campos de contraseña.'
+                )
+            
+            # Verificar que la contraseña actual sea correcta
+            if not self.instance.check_password(old_password):
+                raise forms.ValidationError('La contraseña actual es incorrecta.')
+            
+            # Verificar que las nuevas contraseñas coincidan
+            if new_password1 != new_password2:
+                raise forms.ValidationError('Las nuevas contraseñas no coinciden.')
+            
+            # Validar fortaleza de la contraseña
+            if len(new_password1) < 8:
+                raise forms.ValidationError('La nueva contraseña debe tener al menos 8 caracteres.')
+        
+        return cleaned_data
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        
+        # Cambiar contraseña si se proporcionó
+        new_password = self.cleaned_data.get('new_password1')
+        if new_password:
+            user.set_password(new_password)
+        
+        if commit:
+            user.save()
+        return user
