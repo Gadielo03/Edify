@@ -176,23 +176,18 @@ class UserProfileEditForm(forms.ModelForm):
         new_password1 = cleaned_data.get('new_password1')
         new_password2 = cleaned_data.get('new_password2')
         
-        # Validar cambio de contraseña
         if any([old_password, new_password1, new_password2]):
-            # Si algún campo de contraseña está lleno, todos deben estarlo
             if not all([old_password, new_password1, new_password2]):
                 raise forms.ValidationError(
                     'Para cambiar tu contraseña, debes completar todos los campos de contraseña.'
                 )
             
-            # Verificar que la contraseña actual sea correcta
             if not self.instance.check_password(old_password):
                 raise forms.ValidationError('La contraseña actual es incorrecta.')
             
-            # Verificar que las nuevas contraseñas coincidan
             if new_password1 != new_password2:
                 raise forms.ValidationError('Las nuevas contraseñas no coinciden.')
             
-            # Validar fortaleza de la contraseña
             if len(new_password1) < 8:
                 raise forms.ValidationError('La nueva contraseña debe tener al menos 8 caracteres.')
         
@@ -201,7 +196,6 @@ class UserProfileEditForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         
-        # Cambiar contraseña si se proporcionó
         new_password = self.cleaned_data.get('new_password1')
         if new_password:
             user.set_password(new_password)
